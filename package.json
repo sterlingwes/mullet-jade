@@ -1,0 +1,10 @@
+{
+    "name": "mullet jade",
+    "version": "0.0.0",
+    "dependencies": {
+        "jade": "",
+        "underscore": ""
+    },
+    "description": "",
+    "main": "main.js"
+}
