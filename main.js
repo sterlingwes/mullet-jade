@@ -1,10 +1,21 @@
+/*
+ * # Jade
+ * 
+ * Handles rendering jade templates and passing through init data to clientside engines (React)
+ * 
+ * @exports {Object} Renderer a JadeRenderer instance for assembling templates and data
+ * @exports {Function} render passthru to Jade engine for strings
+ * @exports {Function} renderFile passthru to Jade engine for .jade files
+ * 
+ */
+
 var _ = require('underscore')
   , Jade = require('jade');
 
 /*
- * JadeRenderer
+ * ## JadeRenderer.constructor
  * 
- * - cfg, object has
+ * @param {Object} cfg may have the following
  *      - templateFile: string path to jade template
  *      - template: string of jade to render
  *      - options: jade configuration options
@@ -21,7 +32,11 @@ function JadeRenderer(cfg) {
 };
 
 /*
- * JadeRenderer.addData() - augment data before rendering
+ * ## JadeRenderer.addData() 
+ * 
+ * Augment data before rendering
+ * 
+ * @param {Object} moreData
  */
 JadeRenderer.prototype.addData = function(moreData) {
     this.data = this.data || {};
@@ -29,10 +44,13 @@ JadeRenderer.prototype.addData = function(moreData) {
 };
 
 /*
- * JadeRenderer.addReact() - adds a React component as an object that returns HTML rendered server-side and initialization hooks
+ * ## JadeRenderer.addReact()
  * 
- * - name, string: must match the name of the variable you'd like passed to the Jade compiler
- * - component, instance of ReactRenderer
+ * Adds a React component as an object and preps component HTML and initialization hooks
+ * 
+ * @param {String} name (optional) of React component to match the variable you'd like passed to the Jade template, otherwise uses the name of the `component` param
+ * @param {Object} component as an instance of ReactRenderer
+ * @return {Object} itself for chaining
  */
 JadeRenderer.prototype.addReact = function(name, component) {
 
@@ -44,24 +62,30 @@ JadeRenderer.prototype.addReact = function(name, component) {
 
     this.injectScript(
         'if(AppComponents["'+ name +'"]) React.renderComponent(AppComponents["'+ name +'"]('
-                + JSON.stringify(component.data ||{}) +', '
+                + JSON.stringify(component.data ||{}) +'), '
                 +'document.querySelector("#'+ name +'"));');
     
     return this;
 };
 
 /*
- * JadeRenderer.injectScript() - queues script to add to HTML on render()
+ * ## JadeRenderer.injectScript() 
  * 
- * - script, string to add
- * - inHead, boolean: if true, appends script to doc head, otherwise to body
+ * Queues script to add to HTML on render()
+ * 
+ * @param {String} script to add
+ * @param {Boolean} inHead if true, appends script to doc head, otherwise to body
  */
 JadeRenderer.prototype.injectScript = function(script, inHead) {
     this[ ( inHead ? 'head' : 'foot' ) + 'scripts' ].push( script );
 };
 
 /*
- * JadeRenderer.render() - render and return HTML
+ * ## JadeRenderer.render() 
+ * 
+ * Render and return HTML
+ * 
+ * @return {String} html
  */
 JadeRenderer.prototype.render = function() {
 
@@ -73,12 +97,12 @@ JadeRenderer.prototype.render = function() {
 
     if(this.footscripts.length) {
         var scripts = '<script>'+this.footscripts.join('</script><script>')+'</script>';
-        html.replace('</body>', scripts+'</body>');
+        html = html.replace('</body>', scripts+'</body>');
     }
 
     if(this.headscripts.length) {
         var scripts = '<script>'+this.headscripts.join('</script><script>')+'</script>';
-        html.replace('</head>', '<script>'+scripts+'</script></head>');
+        html = html.replace('</head>', '<script>'+scripts+'</script></head>');
     }
 
     return html;
@@ -86,5 +110,8 @@ JadeRenderer.prototype.render = function() {
 };
 
 module.exports = {
-    Renderer:   JadeRenderer
+    Renderer:   JadeRenderer,
+    
+    render:     Jade.render,
+    renderFile: Jade.renderFile
 };
