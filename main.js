@@ -61,10 +61,9 @@ JadeRenderer.prototype.addReact = function(name, component) {
     this.data[name] = component.render();
 
     this.injectScript(
-        'if(AppComponents["'+ name +'"]) React.renderComponent(AppComponents["'+ name +'"]('
+        'if(window.AppComponents["'+ name +'"]) React.renderComponent(window.AppComponents["'+ name +'"]('
                 + JSON.stringify(component.data ||{}) +'), '
                 +'document.querySelector("#'+ name +'"));');
-    
     return this;
 };
 
