@@ -95,13 +95,13 @@ JadeRenderer.prototype.render = function() {
     }
 
     if(this.footscripts.length) {
-        var scripts = '<script>'+this.footscripts.join('</script><script>')+'</script>';
-        html = html.replace('</body>', scripts+'</body>');
+        var ftscripts = '<script>'+this.footscripts.join('</script><script>')+'</script>';
+        html = html.replace('</body>', ftscripts+'</body>');
     }
 
     if(this.headscripts.length) {
-        var scripts = '<script>'+this.headscripts.join('</script><script>')+'</script>';
-        html = html.replace('</head>', '<script>'+scripts+'</script></head>');
+        var hdscripts = '<script>'+this.headscripts.join('</script><script>')+'</script>';
+        html = html.replace('</head>', '<script>'+hdscripts+'</script></head>');
     }
 
     return html;
